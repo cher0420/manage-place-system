@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { REPLACE } from '../store/mutation-types'
+import { REPLACE, UPDATETABLE } from '../store/mutation-types'
+import {MENUS} from '../constants/constants'
 
 Vue.use(Vuex)
 
@@ -9,7 +10,10 @@ const store = new Vuex.Store({
     app: {
       navText: '领域管理',
       active: '1',
-      loading: true
+      login: false,
+      loading: false,
+      menu: MENUS,
+      tableData: []
     }
   },
   mutations: {
@@ -23,7 +27,11 @@ const store = new Vuex.Store({
   actions: {
     [REPLACE] (context, payload) {
       context.commit(REPLACE, payload)
-    }
+    },
+    [UPDATETABLE] (context, payload) {
+
+      context.commit(REPLACE, payload)
+    },
   }
 })
 

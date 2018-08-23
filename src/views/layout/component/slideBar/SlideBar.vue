@@ -18,25 +18,17 @@
 import store from '../../../../store'
 import {REPLACE} from '../../../../store/mutation-types'
 import {navTextObj} from '../../../../constants/constants'
-import {getMenus} from '../../../../utils/server'
 
 export default {
   data () {
     return {
-
+      menu: store.state.app.menu
     }
   },
   computed: {
     activeKey () {
       return store.state.app.active
-      // return '2'
-    },
-    menu () {
-      return store.state.app.menu
     }
-  },
-  beforeCreate: function () {
-    getMenus().then((res)=>{console.log(res)}).catch()
   },
   created: function () {
     const name = this.$route.name

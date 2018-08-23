@@ -1,22 +1,27 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-    <el-form-item label="id" prop="id">
+  <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" v-loading="loading">
+    <el-form-item label="ID" prop="ID">
       <el-col :span="16">
-        <el-input v-model="form.id"></el-input>
+        <el-input v-model="ruleForm.ID" :disabled="IDStatus"></el-input>
       </el-col>
     </el-form-item>
-    <el-form-item label="分类名称" prop="name">
+    <el-form-item label="分类名称" prop="CategoryName">
       <el-col :span="16">
-        <el-input v-model="form.type"></el-input>
+        <el-input v-model="ruleForm.CategoryName"></el-input>
       </el-col>
     </el-form-item>
-    <el-form-item label="内容" class="container" prop="content">
-      <el-col :spam="16">
-        <quill-editor ref="myTextEditor" v-model="form.content" :options="editorOption"></quill-editor>
+    <el-form-item prop = 'Status'>
+      <el-col :span="16">
+        <el-checkbox v-model="ruleForm.Status">可用</el-checkbox>
       </el-col>
     </el-form-item>
+    <!--<el-form-item label="内容" class="container" prop="content">-->
+      <!--<el-col :spam="16">-->
+        <!--<quill-editor ref="myTextEditor" v-model="ruleForm.content" :options="editorOption"></quill-editor>-->
+      <!--</el-col>-->
+    <!--</el-form-item>-->
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">立即创建</el-button>
+      <el-button type="primary" @click="onSubmit">{{button}}</el-button>
       <el-button @click="cancle">取消</el-button>
     </el-form-item>
   </el-form>
@@ -26,22 +31,30 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
-import {unhtml, htmlDecodeByRegExp} from '../../utils/utils'
+import {ADDARTICALCATEGORY, UPDATEARTICALCATEGORY, ARTICALCATEGORYDETAIL} from '../../constants/api'
+import URL from '../../constants/baseUrl'
+import {getCookies} from '../../utils/utils'
+
 export default {
   data () {
     return {
-      form: {
-        title: '',
-        type: '',
-        content: ''
+      ruleForm: {
+        ID: '',
+        CategoryName: '',
+        // content: ''
+        Status: true
       },
       rules: {
-        title: [
-          {required: true, message: '请输入标题！', trigger: 'blur'}
+        ID: [
+          {required: false, message: '请输入ID！', trigger: 'blur'}
         ],
-        type: [{required: false, message: '选择分类!'}],
-        content: [{required: true, message: '请添加内容', trigger: 'blur'}]
+        CategoryName: [{required: false, message: '请选择分类!'}],
+        Status: [{required: true, message: '请选择状态!'}]
+        // content: [{required: true, message: '请添加内容', trigger: 'blur'}]
       },
+      button: '立即创建',
+      loading: false,
+      IDStatus: true,
       editorOption: {
         placeholder: 'Hello World'
       }
@@ -50,17 +63,31 @@ export default {
   components: {
     quillEditor
   },
+  created: function () {
+    const ID = this.$route.query.ID
+    const that = this
+    if (ID) {
+      that.button = '立即更新'
+      that.loading = true
+      that.getDetail(ARTICALCATEGORYDETAIL, 'ContentCategoryList', ID)
+    } else {
+      that.button = '立即创建'
+    }
+  },
   methods: {
     onSubmit (v) {
-      this.$refs.form.validate((valid) => {
+      const form = this.ruleForm
+      let obj = {}
+      const that = this
+      this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          htmlDecodeByRegExp(this.form.detail).then(
-            (res) => {
-
-            }
-          ).catch(
-            err => err
-          )
+          form.Status = form.Status ? '1' : '0'
+          obj = {
+            ...form,
+            ...obj
+          }
+          const way = that.button === '立即创建' ? ADDARTICALCATEGORY : UPDATEARTICALCATEGORY
+          that.updateItem(way, 'BotInfo', obj)
         } else {
           console.log('error submit!!')
           return false
@@ -77,6 +104,68 @@ export default {
       }).catch(() => {
         return false
       })
+    },
+    getDetail (api, key = 'ContentCategoryList', ID) {
+      const that = this
+      const url = `${URL.baseUrl + api}?id=${ID}`
+      const cookie = getCookies('Access-Token')
+      fetch(url, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Token': cookie
+        }
+      }).then(
+        response => response.json()
+      ).then(
+        (res) => {
+          const obj = res[key][0]
+          obj.Status = obj.Status === '1'
+          that.ruleForm = obj
+          that.loading = false
+        }).catch((err) => { return err })
+    },
+    updateItem (api, key = 'ContentCategoryList', params) {
+      const that = this
+      const baseData = JSON.stringify(params)
+      that.loading = true
+      const cookie = getCookies('Access-Token')
+      fetch(URL.baseUrl + api,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Token': cookie
+          },
+          body: baseData
+        }
+      ).then((response) => {
+        return response.json()
+      }).then(
+        (res) => {
+          that.loading = true
+          if (res.Status) {
+            that.$message({
+              message: '创建成功',
+              type: 'success',
+              duration: 1000,
+              onClose: () => {
+                that.$router.go(-1)
+              }
+            })
+          } else {
+            that.$message({
+              message: '创建失败,尝试更改领域名称',
+              type: 'error',
+              duration: 1000,
+              onClose: () => {
+                that.loading = false
+              }
+            })
+          }
+        }
+      ).catch(
+        err => err
+      )
     }
   }
 }

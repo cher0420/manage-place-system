@@ -32,15 +32,12 @@ export async function removeCookies (keyArr) {
     for (let v of keyArr) {
       Cookies.remove(v)
     }
-  } else if (keyArr instanceof String) {
-    Cookies.remove(keyArr)
   } else {
-    console.log('参数错误！')
-    return false
+    Cookies.remove(keyArr)
   }
 }
 
-export async function unhtml (str) {
+export function unhtml (str) {
   return str ? str.replace(/[<">']/g, (a) => {
     return {
       '<': '&lt;',
@@ -50,7 +47,7 @@ export async function unhtml (str) {
     }[a]
   }) : ''
 }
-export async function htmlDecodeByRegExp (str) {
+export function htmlDecodeByRegExp (str) {
   let s = ''
   if (str.length === 0) return ''
   s = str.replace(/&amp;/g, '&')
@@ -61,4 +58,3 @@ export async function htmlDecodeByRegExp (str) {
   s = s.replace(/&quot;/g, '"')
   return s
 }
-

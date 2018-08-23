@@ -5,12 +5,11 @@
   </div>
 </template>
 <script>
-import TableList from './TableList'
+import TableList from './robotTableList'
 export default {
   methods: {
     create: function () {
-      console.log('点击了', this.$router)
-      this.$router.push({ path: '/robot/create' })
+      this.$router.push({ path: '/bot/create' })
     }
   },
   components: {

@@ -14,8 +14,9 @@
     </el-row>
 </template>
 <script>
-import {removeCookies, getCookies} from '../../../../utils/utils'
+import {removeCookies} from '../../../../utils/utils'
 import store from '../../../../store'
+import {REPLACE} from '../../../../store/mutation-types'
 
 export default {
   name: 'Navbar',
@@ -39,9 +40,8 @@ export default {
     },
     handleCommand (callback) {
       const that = this
-      removeCookies(['username', 'password']).then(() => {
-        console.log('完成')
-        console.log(getCookies('username'))
+      removeCookies('Access-Token')
+      store.dispatch(REPLACE, {login: false}).then(() => {
         that.$router.push(
           '/login'
         )

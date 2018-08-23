@@ -39,23 +39,23 @@ const constantRouterMap = [
     }]
   },
   {
-    path: '/robot',
+    path: '/bot',
     component: Layout,
-    name: 'robot',
+    name: 'bot',
     children: [
       {
         path: 'index',
-        name: 'robot',
+        name: 'bot',
         component: () => import('../views/robot/index')
       },
       {
         path: 'create',
-        name: 'robot',
+        name: 'bot',
         component: () => import('../views/robot/edit')
       },
       {
         path: 'edit',
-        name: 'robot',
+        name: 'bot',
         component: () => import('../views/robot/edit')
       }
     ]

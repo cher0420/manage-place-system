@@ -5,35 +5,35 @@
     stripe
     style="width: 100%">
     <el-table-column
+      prop="BotName"
+      label="机器人名称"
+      width="180">
+    </el-table-column>
+    <el-table-column
       prop="ID"
-      label="ID"
+      label="代码模版ID"
       width="180">
     </el-table-column>
     <el-table-column
-      prop="MenuName_CN"
-      label="菜单名"
-      width="180">
+      prop="DomainName"
+      label="领域">
     </el-table-column>
     <el-table-column
-      prop="MenuName_EN"
-      label="英文名">
+      prop="BotType"
+      label="类型">
     </el-table-column>
     <el-table-column
-    prop="SortCode"
-    label="排序码">
-  </el-table-column>
-    <el-table-column
-      prop="IsBlank"
-      label="外链">
+    prop="DeployModel"
+    label="部署模式">
       <template slot-scope="scope">
-        <div>{{scope.row.IsBlank === 'True'?'外链':'无'}}</div>
+        <div>{{scope.row.DeployModel === 'share'?'共享部署':'独立部署'}}</div>
       </template>
     </el-table-column>
     <el-table-column
-      prop="Status"
-      label="状态">
+      prop="IsAutoCreate"
+      label="自动部署">
       <template slot-scope="scope">
-        <div>{{scope.row.IsEnabled === 'True'?'可用':'不可用'}}</div>
+        <div>{{scope.row.IsAutoCreate === 'False'?'否':'是'}}</div>
       </template>
     </el-table-column>
     <el-table-column
@@ -48,13 +48,14 @@
 </template>
 <script>
 import {getList} from '../../utils/server'
-import {MENULIST, DELETEMENU} from '../../constants/api'
+import {BOTLIST, DELETEBOT} from '../../constants/api'
 import store from '../../store'
 import {REPLACE} from '../../store/mutation-types'
 import URL from '../../constants/baseUrl'
 import {getCookies} from '../../utils/utils'
 
 export default {
+  name: 'tableList',
   data () {
     return {
     }
@@ -68,11 +69,11 @@ export default {
     }
   },
   beforeCreate: function () {
-    getList(MENULIST, 'List')
+    getList(BOTLIST, 'BotInfo')
   },
   methods: {
     edit (v) {
-      this.$router.push({path: '/menu/edit', query: { ID: v }})
+      this.$router.push({path: '/bot/edit', query: { ID: v }})
     },
     deleteItem (v) {
       this.$confirm('确定是否删除?', '提示', {
@@ -80,7 +81,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.del(DELETEMENU, {ID: v})
+        this.del(DELETEBOT, {ID: v})
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -110,7 +111,7 @@ export default {
             message: '删除成功!',
             duration: 1000,
             onClose: () => {
-              getList(MENULIST, 'List')
+              getList(BOTLIST, 'BotInfo')
             }
           })
         } else {
@@ -127,5 +128,7 @@ export default {
   }
 }
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 </style>
