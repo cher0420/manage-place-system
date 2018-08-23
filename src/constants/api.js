@@ -5,6 +5,7 @@ export const BOTDOMAINDETAIL = '/api/BotDomain/GetDomainById'
 export const DELETEBOTDOMAIN = '/api/BotDomain/delete'
 export const ADDBOTDOMAIN = '/api/BotDomain/Submit'
 export const UPDATEBOTDOMAIN = '/api/BotDomain/update'
+export const USABLEDDOMAINLIST = '/api/BotDomain/GetUsableDomainList'
 
 export const MENULIST = '/api/Menu/GetMenusList'
 export const ADDMENU = '/api/Menu/SubmitMenus'
@@ -29,3 +30,4 @@ export const DELETEARTICALCATEGORY = '/api/ContentCategory/Delete'
 export const UPDATEARTICALCATEGORY = '/api/ContentCategory/Update'
 export const ADDARTICALCATEGORY = '/api/ContentCategory/Submit'
 export const ARTICALCATEGORYDETAIL = '/api/ContentCategory/CategoryById'
+

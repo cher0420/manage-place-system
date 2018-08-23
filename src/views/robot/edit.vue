@@ -82,7 +82,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 import {unhtml, htmlDecodeByRegExp, getCookies} from '../../utils/utils'
-import {UPDATEBOT, ADDBOT, BOTDETAIL, BOTDOMAINLIST} from '../../constants/api'
+import {UPDATEBOT, ADDBOT, BOTDETAIL, USABLEDDOMAINLIST} from '../../constants/api'
 import URL from '../../constants/baseUrl'
 import {DEPLOYMODEL} from '../../constants/constants'
 import {request} from '../../utils/server'
@@ -133,7 +133,7 @@ export default {
   created: function () {
     const ID = this.$route.query.ID
     const that = this
-    that.getBotDomain(BOTDOMAINLIST, 'BotDomain')
+    that.getBotDomain(USABLEDDOMAINLIST, 'BotDomain')
     if (ID) {
       that.button = '立即更新'
       that.loading = true

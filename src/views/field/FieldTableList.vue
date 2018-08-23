@@ -101,24 +101,22 @@ export default {
       }
       request(api, null, option).then(
         (res) => {
-          if (res.Status) {
-            store.dispatch(REPLACE, {loading: true})
-            this.$message({
-              type: 'success',
-              message: '删除成功!',
-              duration: 1000,
-              onClose: () => {
-                getList(BOTDOMAINLIST, 'BotDomain')
-              }
-            })
-          } else {
-            this.$message({
-              type: 'error',
-              message: '删除shib!'
-            })
-          }
+          store.dispatch(REPLACE, {loading: true})
+          this.$message({
+            type: 'success',
+            message: '删除成功!',
+            duration: 1000,
+            onClose: () => {
+              getList(BOTDOMAINLIST, 'BotDomain')
+            }
+          })
         }
-      ).catch(err => err)
+      ).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: `${err.ErrorCodes[0].ErrorMessage}`
+        })
+      })
     }
   }
 }
