@@ -7,7 +7,7 @@
     </el-form-item>
     <el-form-item label="分类名称" prop="CategoryName">
       <el-col :span="16">
-        <el-input v-model="ruleForm.CategoryName"></el-input>
+        <el-input v-model="ruleForm.CategoryName" placeholder="请添加分类名称"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item prop = 'Status'>
@@ -32,8 +32,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import { quillEditor } from 'vue-quill-editor'
 import {ADDARTICALCATEGORY, UPDATEARTICALCATEGORY, ARTICALCATEGORYDETAIL} from '../../constants/api'
-import URL from '../../constants/baseUrl'
-import {getCookies} from '../../utils/utils'
+import {request} from '../../utils/server'
 
 export default {
   data () {
@@ -107,18 +106,10 @@ export default {
     },
     getDetail (api, key = 'ContentCategoryList', ID) {
       const that = this
-      const url = `${URL.baseUrl + api}?id=${ID}`
-      const cookie = getCookies('Access-Token')
-      fetch(url, {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Access-Token': cookie
-        }
-      }).then(
-        response => response.json()
-      ).then(
+      const url = `${api}?id=${ID}`
+      request(url, key).then(
         (res) => {
-          const obj = res[key][0]
+          const obj = res[0]
           obj.Status = obj.Status === '1'
           that.ruleForm = obj
           that.loading = false
@@ -128,43 +119,32 @@ export default {
       const that = this
       const baseData = JSON.stringify(params)
       that.loading = true
-      const cookie = getCookies('Access-Token')
-      fetch(URL.baseUrl + api,
+      request(api, key,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Access-Token': cookie
-          },
           body: baseData
         }
-      ).then((response) => {
-        return response.json()
-      }).then(
+      ).then(
         (res) => {
           that.loading = true
-          if (res.Status) {
-            that.$message({
-              message: '创建成功',
-              type: 'success',
-              duration: 1000,
-              onClose: () => {
-                that.$router.go(-1)
-              }
-            })
-          } else {
-            that.$message({
-              message: '创建失败,尝试更改领域名称',
-              type: 'error',
-              duration: 1000,
-              onClose: () => {
-                that.loading = false
-              }
-            })
-          }
+          that.$message({
+            message: '创建成功',
+            type: 'success',
+            duration: 1000,
+            onClose: () => {
+              that.$router.go(-1)
+            }
+          })
         }
       ).catch(
-        err => err
+        err => that.$message({
+          message: `${err.ErrorCodes[0].ErrorMessage}`,
+          type: 'error',
+          duration: 2000,
+          onClose: () => {
+            that.loading = false
+          }
+        })
       )
     }
   }

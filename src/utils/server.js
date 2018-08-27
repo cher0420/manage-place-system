@@ -20,40 +20,15 @@ export function getList (api, key) {
       store.dispatch(REPLACE, {loading: false})
     }
   )
-  // const cookie = getCookies('Access-Token')
-  // fetch(URL.baseUrl + api, {
-  //   headers: {
-  //     'Content-Type': 'application/json; charset=utf-8',
-  //     'Access-Token': cookie
-  //   }
-  // }).then((response) => {
-  //   if (response.status === 200) {
-  //     return response.json()
-  //   } else if (response.status === 401) {
-  //     store.dispatch(REPLACE, {login: false}).then(
-  //       () => {
-  //         ElementUI.Message({
-  //           type: 'error',
-  //           message: '登录超时，正在为您跳转登录页面！',
-  //           duration: 1000,
-  //           onClose: () => {
-  //             removeCookies('Access-Token')
-  //             router.push('/login')
-  //           }
-  //         })
-  //       }
-  //     )
-  //   }
-  // }).then((res) => {
-  //   if (res.Status) {
-  //     store.dispatch(REPLACE, {tableData: res[key]})
-  //     store.dispatch(REPLACE, {loading: false})
-  //   }
-  // }
-  // ).catch(err => err)
 }
-
-export const request = (api, key = null, option) => {
+/**
+ * 请求接口
+ * @param api
+ * @param key
+ * @param option
+ * @return {Promise<any>}
+ */
+export const request = (api, key = null, option = null) => {
   const cookie = getCookies('Access-Token')
   return new Promise((resolve, reject) => {
     fetch(URL.baseUrl + api, {

@@ -30,7 +30,7 @@
       prop="IsCommon"
       label="常用领域">
       <template slot-scope="scope">
-        <div>{{scope.row.IsCommon?'是':'否'}}</div>
+        <div>{{scope.row.IsCommon === '1'?'是':'否'}}</div>
       </template>
     </el-table-column>
     <el-table-column

@@ -2,17 +2,17 @@
   <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" v-loading="loading">
     <el-form-item label="领域名称" prop="DomainName">
       <el-col :span="16">
-        <el-input v-model="ruleForm.DomainName"></el-input>
+        <el-input v-model="ruleForm.DomainName" placeholder="请输入领域名称"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="领域图标" prop="DomainIcon">
       <el-col :span="16">
-        <el-input v-model="ruleForm.DomainIcon"></el-input>
+        <el-input v-model="ruleForm.DomainIcon" placeholder="请输入图片链接地址，例如：https://hightalkmarketstoretest.blob.core.windows.net/xxxx.png"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="展示图" prop="DomainImage">
       <el-col :span="16">
-        <el-input v-model="ruleForm.DomainImage"></el-input>
+        <el-input v-model="ruleForm.DomainImage" placeholder="请输入图片链接地址，例如：https://hightalkmarketstoretest.blob.core.windows.net/xxxx.png"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="领域描述" prop="Description">
@@ -20,7 +20,7 @@
         <el-input
           type="textarea"
           :autosize="{ minRows: 2, maxRows: 4}"
-          placeholder="请输入内容"
+          placeholder="请输入领域描述"
           v-model="ruleForm.Description">
         </el-input>
       </el-col>
@@ -43,8 +43,6 @@
 </template>
 <script>
 import {ADDBOTDOMAIN, BOTDOMAINDETAIL, UPDATEBOTDOMAIN} from '../../constants/api'
-import URL from '../../constants/baseUrl'
-import {getCookies} from '../../utils/utils'
 import {request} from '../../utils/server'
 
 export default {
@@ -63,8 +61,8 @@ export default {
         DomainName: [
           {type: 'string', required: true, message: '请输入名称！', trigger: 'blur'}
         ],
-        DomainImage: [{required: true, message: '请输入图片地址！', trigger: 'blur'}],
-        DomainIcon: [{required: true, message: '请输入图标地址！', trigger: 'blur'}],
+        DomainImage: [{required: true, message: '请输入图片链接地址！例如：https://hightalkmarketstoretest.blob.core.windows.net/img/domain_icon/icon.png', trigger: 'blur'}],
+        DomainIcon: [{required: true, message: '请输入图标的链接地址！例如：https://hightalkmarketstoretest.blob.core.windows.net/img/domain_icon/icon.png', trigger: 'blur'}],
         Description: [{required: true, message: '请输入描述！', trigger: 'blur'}],
         IsCommon: [{type: 'boolean'}],
         Status: [{type: 'boolean'}]
@@ -163,5 +161,6 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
+  @import '../../style/index';
 </style>

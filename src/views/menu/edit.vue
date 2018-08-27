@@ -2,17 +2,17 @@
   <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px" v-loading="loading">
     <el-form-item label="菜单名" prop="MenuName_CN">
       <el-col :span="16">
-        <el-input v-model="ruleForm.MenuName_CN"></el-input>
+        <el-input v-model="ruleForm.MenuName_CN" placeholder="请添加菜单名"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="英文名" prop="MenuName_EN">
       <el-col :span="16">
-        <el-input v-model="ruleForm.MenuName_EN"></el-input>
+        <el-input v-model="ruleForm.MenuName_EN" placeholder="请添加英文名"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="父菜单" prop="ParentMenuId">
       <el-col :span="16">
-        <el-select v-model="ruleForm.ParentMenuId" placeholder="请选择">
+        <el-select v-model="ruleForm.ParentMenuId" placeholder="请选择父菜单">
           <el-option
             v-for="item in options"
             :key="item.ID"
@@ -29,12 +29,12 @@
     </el-form-item>
     <el-form-item label="链接" prop="Href">
       <el-col :span="16">
-        <el-input v-model="ruleForm.Href"></el-input>
+        <el-input v-model="ruleForm.Href" placeholder="请添加链接地址"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="图标" prop="MenuIcon">
       <el-col :span="16">
-        <el-input v-model="ruleForm.MenuIcon"></el-input>
+        <el-input v-model="ruleForm.MenuIcon" placeholder="请添加图标链接地址，例如：https://hightalkmarketstoretest.blob.core.windows.net/xxxx.png"></el-input>
       </el-col>
     </el-form-item>
     <el-form-item label="排序码" prop = 'SortCode'>
@@ -55,8 +55,7 @@
 </template>
 <script>
 import {ADDMENU, MENUDETAIL, MENULIST, UPDATEMENU} from '../../constants/api'
-import URL from '../../constants/baseUrl'
-import {getCookies} from '../../utils/utils'
+import {request} from '../../utils/server'
 
 export default {
   data () {
@@ -82,7 +81,7 @@ export default {
         ParentMenuId: [{required: true, message: '请选择父级菜单', trigger: 'blur'}],
         IsBlank: [{type: 'boolean', required: true, message: '是否外链!', trigger: 'blur'}],
         Href: [{required: false, message: '请输入链接地址!', trigger: 'blur'}],
-        MenuIcon: [{required: false, message: '请输入图标!', trigger: 'blur'}],
+        MenuIcon: [{required: false, message: '请输入图标!例如：https://hightalkmarketstoretest.blob.core.windows.net/img/domain_icon/icon.png"', trigger: 'blur'}],
         SortCode: [{type: 'number', required: true, message: '请选择排序码!', trigger: 'blur'}],
         IsEnabled: [{type: 'boolean', required: false, message: '是否可用!', trigger: 'blur'}]
       },
@@ -139,18 +138,10 @@ export default {
     },
     getDetail (api, key = 'List', ID) {
       const that = this
-      const url = `${URL.baseUrl + api}?id=${ID}`
-      const cookie = getCookies('Access-Token')
-      fetch(url, {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Access-Token': cookie
-        }
-      }).then(
-        response => response.json()
-      ).then(
+      const url = `${api}?id=${ID}`
+      request(url, key).then(
         (res) => {
-          const arr = res[key][0]
+          const arr = res[0]
           arr.IsBlank = arr.IsBlank === 'True'
           arr.IsEnabled = arr.IsEnabled === 'True'
           that.ruleForm = arr
@@ -159,19 +150,9 @@ export default {
     },
     getOptions (api, key) {
       const that = this
-      const cookie = getCookies('Access-Token')
-      fetch(URL.baseUrl + api, {
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-          'Access-Token': cookie
-        }
-      }).then((response) => {
-        return response.json()
-      }).then((res) => {
-        if (res.Status) {
-          const ArrItem = [{ID: 'ROOT', MenuName_CN: 'ROOT'}]
-          that.options = [...res[key], ...ArrItem]
-        }
+      request(api, key).then((res) => {
+        const ArrItem = [{ID: 'ROOT', MenuName_CN: 'ROOT'}]
+        that.options = [...res, ...ArrItem]
       }
       ).catch(err => err)
     },
@@ -179,43 +160,32 @@ export default {
       const that = this
       const baseData = JSON.stringify(params)
       that.loading = true
-      const cookie = getCookies('Access-Token')
-      fetch(URL.baseUrl + api,
+      request(api, key,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Access-Token': cookie
-          },
           body: baseData
         }
-      ).then((response) => {
-        return response.json()
-      }).then(
+      ).then(
         (res) => {
           that.loading = true
-          if (res.Status) {
-            that.$message({
-              message: '创建成功',
-              type: 'success',
-              duration: 1000,
-              onClose: () => {
-                that.$router.go(-1)
-              }
-            })
-          } else {
-            that.$message({
-              message: '创建失败,尝试更改领域名称',
-              type: 'error',
-              duration: 1000,
-              onClose: () => {
-                that.loading = false
-              }
-            })
-          }
+          that.$message({
+            message: '创建成功',
+            type: 'success',
+            duration: 1000,
+            onClose: () => {
+              that.$router.go(-1)
+            }
+          })
         }
       ).catch(
-        err => err
+        err => that.$message({
+          message: `${err.ErrorCodes[0].ErrorMessage}`,
+          type: 'error',
+          duration: 1000,
+          onClose: () => {
+            that.loading = false
+          }
+        })
       )
     },
     handleChange (v) {

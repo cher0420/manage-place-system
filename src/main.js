@@ -5,6 +5,7 @@ import ElementUI from 'element-ui'
 import '@/style/index.scss'
 import '@/style/element-variables.scss'
 import store from './store'
+import 'babel-polyfill'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

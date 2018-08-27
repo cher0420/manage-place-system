@@ -47,12 +47,10 @@
   </el-table>
 </template>
 <script>
-import {getList} from '../../utils/server'
+import {getList, request} from '../../utils/server'
 import {BOTLIST, DELETEBOT} from '../../constants/api'
 import store from '../../store'
 import {REPLACE} from '../../store/mutation-types'
-import URL from '../../constants/baseUrl'
-import {getCookies} from '../../utils/utils'
 
 export default {
   name: 'tableList',
@@ -81,7 +79,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.del(DELETEBOT, {ID: v})
+        this.del(DELETEBOT, null, {ID: v})
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -89,40 +87,29 @@ export default {
         })
       })
     },
-    del (api, params) {
+    del (api, key, params) {
       const baseData = JSON.stringify(params)
-      const cookie = getCookies('Access-Token')
-      fetch(URL.baseUrl + api,
+      request(api, key,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Access-Token': cookie
-          },
           body: baseData
         }
-      ).then(
-        response => response.json()
       ).then((res) => {
-        if (res.Status) {
-          store.dispatch(REPLACE, {loading: true})
-          this.$message({
-            type: 'success',
-            message: '删除成功!',
-            duration: 1000,
-            onClose: () => {
-              getList(BOTLIST, 'BotInfo')
-            }
-          })
-        } else {
-          this.$message({
-            type: 'error',
-            message: '删除失败!'
-          })
-        }
+        store.dispatch(REPLACE, {loading: true})
+        this.$message({
+          type: 'success',
+          message: '删除成功!',
+          duration: 1000,
+          onClose: () => {
+            getList(BOTLIST, 'BotInfo')
+          }
+        })
       }
       ).catch(
-        err => err
+        err => this.$message({
+          type: 'error',
+          message: `${err.ErrorCodes[0].ErrorMessage}`
+        })
       )
     }
   }
