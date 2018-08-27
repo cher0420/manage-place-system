@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import 'babel-polyfill'
 import Vuex from 'vuex'
 import { REPLACE, UPDATETABLE } from '../store/mutation-types'
 import {MENUS} from '../constants/constants'

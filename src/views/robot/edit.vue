@@ -183,7 +183,7 @@ export default {
       request(url, key).then(
         (res) => {
           const obj = res
-          obj.IsAutoCreate = !'False'
+          obj.IsAutoCreate = res.IsAutoCreate === 'True'
           obj.DeployModel = DEPLOYMODEL[obj.DeployModel]
           obj.BotDetail = htmlDecodeByRegExp(obj.BotDetail)
           that.ruleForm = obj
