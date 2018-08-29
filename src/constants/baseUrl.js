@@ -1,4 +1,7 @@
 export const HOSTTEST = {
   baseUrl: 'https://hightalkmarketplaceadmin-test.azurewebsites.net'
 }
-export default HOSTTEST
+export const HOSTSTAGING = {
+  baseUrl: 'https://hightalkmarketplaceadmin-staging.azurewebsites.net'
+}
+export default HOSTSTAGING
