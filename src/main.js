@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import 'babel-polyfill'
+import 'whatwg-fetch'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
